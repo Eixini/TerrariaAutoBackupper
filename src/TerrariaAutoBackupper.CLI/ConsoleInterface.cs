@@ -71,7 +71,8 @@ internal class ConsoleInterface
         Console.WriteLine("2. Manual backup players");
         Console.WriteLine("3. Manual backup worlds");
         Console.WriteLine("4. Help");
-        Console.WriteLine("5. Quit");
+        Console.WriteLine("5. About");
+        Console.WriteLine("6. Quit");
 
         bool selectIsCorrect = int.TryParse(Console.ReadLine(), out select);
 
@@ -89,16 +90,18 @@ internal class ConsoleInterface
                     worldsBackupper.WorldsBackupProcess();
                     return 0;
                 case 4:
-                    Help();
+                    HelpMenu();
                     return 0;
                 case 5:
+                    About();
+                    return 0;
+                case 6:
                     return -1;
             }
         }
         else
         {
             MainMenu();
-            return 0;
         }
 
         return 1;
@@ -169,9 +172,112 @@ internal class ConsoleInterface
     /// <summary>
     /// Method for displaying information and helping with navigation.
     /// </summary>
-    public void Help()
+    public void HelpMenu()
     {
-        Console.WriteLine("Help menu.");
+        Console.Clear();
+
+        Console.WriteLine("Help menu:");
+        Console.WriteLine();
+        Console.WriteLine("1. Data entry example.");
+        Console.WriteLine("2. Main Menu");
+
+        int value = 0;
+        bool selectIsCorrect = int.TryParse(Console.ReadLine(), out value);
+
+        if (value >= 1 && value <= 2)
+        {
+            switch (value)
+            {
+                case 1:
+                    DataEntryExample();
+                    break;
+                case 2:
+                    MainMenu();
+                    break;
+            }
+        }
+        else
+        {
+            HelpMenu();
+        }
+    }
+
+    public void DataEntryExample()
+    {
+        Console.Clear();
+
+        // SOURCE DIRECTORY
+        Console.WriteLine($"Source data directory:");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(@"C:\Users\UserDirectory\Documents\My Games\Terraria");
+        Console.ResetColor();
+
+        // DESTINATION DIRECTORY
+        Console.WriteLine($"Destination directory:");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(@"K:\SomeFolder\Other\TerrariaBackup");
+        Console.ResetColor();
+
+        // PLAYER
+        Console.WriteLine($"Player name:");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("PlayerName");
+        Console.ResetColor();
+
+        // WORLD
+        Console.WriteLine($"Destination directory:");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(@"MyCozyWorld");
+        Console.ResetColor();
+
+        // ================================================================
+        Console.WriteLine("\n");
+        Console.WriteLine("1. Back");
+        Console.WriteLine("2. Main Menu");
+
+        int value = 0;
+        bool selectIsCorrect = int.TryParse(Console.ReadLine(), out value);
+
+        if (value == 1)
+        {
+            HelpMenu();
+        }
+        else if (value == 2)
+        {
+            MainMenu();
+        }
+        else
+        {
+            Console.WriteLine("Incorrect value.");
+            HelpMenu();
+        }
+    }
+
+    public void About()
+    {
+        Console.Clear();
+
+        Console.WriteLine("TerrariaAutoBackupper");
+        Console.WriteLine("A program for conveniently backing up game data such as player data and world data.");
+        Console.WriteLine();
+        Console.WriteLine("Developer - Eixini");
+
+        Console.WriteLine();
+
+        Console.WriteLine("1. Main Menu");
+
+        int value = 0;
+        bool selectIsCorrect = int.TryParse(Console.ReadLine(), out value);
+
+        if (value == 1)
+        {
+            MainMenu();
+        }
+        else
+        {
+            HelpMenu();
+        }
+
     }
 
     /// <summary>
@@ -318,4 +424,5 @@ internal class ConsoleInterface
             ShowConfiguration();
         }
     }
+
 }
