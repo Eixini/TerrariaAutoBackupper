@@ -37,14 +37,12 @@ internal class ConsoleInterface
 
         var process = 0;
 
-        while (true)
+        while (process != -1)
         {
             //playersBackupper.PlayersAutoBackup();
             process = MainMenu();
-
-            if (process == -1)
-                break;
         }
+
     }
 
     /// <summary>
@@ -76,7 +74,7 @@ internal class ConsoleInterface
 
         bool selectIsCorrect = int.TryParse(Console.ReadLine(), out select);
 
-        if (select >= 1 && select <= 5)
+        if (select >= 1 && select <= 6)
         {
             switch (select)
             {
