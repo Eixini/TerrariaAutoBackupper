@@ -171,11 +171,114 @@ public class WorldsBackupper
         string[] worldFiles = Directory.GetFiles(sourceDirectory, $"{world}.wld*");
         foreach (string file in worldFiles)
         {
-            if (File.Exists(Path.Combine(destinationDirectory, Path.GetFileName(file))))
+            if (!File.Exists(Path.Combine(destinationDirectory, Path.GetFileName(file))))
                 File.Copy(Path.Combine(sourceDirectory, Path.GetFileName(file)),
                           Path.Combine(destinationDirectory, Path.GetFileName(file)));
 
-            Console.WriteLine("copy: " + Path.Combine(destinationDirectory, Path.GetFileName(file)));
+            //Console.WriteLine("copy: " + Path.Combine(destinationDirectory, Path.GetFileName(file)));
+        }
+
+    }
+
+    public void CheckInteractiveBackupWorldDirectory(string worldName)
+    {
+        var path = backupContext.ConfigData.BackupTargetDirectory
+                   + Path.DirectorySeparatorChar
+                   + "InteractiveBackupWorld";
+
+        if(!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+
+        var worldPath = path + Path.DirectorySeparatorChar + worldName;
+
+        if(!Directory.Exists(worldPath))
+            Directory.CreateDirectory(worldPath);
+
+    }
+
+    /// <summary>
+    /// Method for interactively copying the world.
+    /// </summary>
+    /// <param name="worldName">World name.</param>
+    public void InteractiveBackupWorld(string worldName, string details = "No description")
+    {
+        if (WorldIsExists(worldName))
+        {
+            CheckInteractiveBackupWorldDirectory(worldName);
+
+            // Backup
+            var sourceWorldPath = backupContext.ConfigData.GameDataDirectory
+                                  + Path.DirectorySeparatorChar
+                                  + "Worlds";
+
+            var dateTimeNow = DateTime.Now;
+
+            var currentWorldBackupFileName = worldName + "_" +
+                                  dateTimeNow.Day.ToString() + "-" +
+                                  dateTimeNow.Month.ToString() + "-" +
+                                  dateTimeNow.Year.ToString() + "_" +
+                                  dateTimeNow.Hour.ToString() + "-" +
+                                  dateTimeNow.Minute.ToString() + "-" +
+                                  dateTimeNow.Second.ToString();
+
+            var destinationWorldPath = backupContext.ConfigData.BackupTargetDirectory +
+                            Path.DirectorySeparatorChar +
+                            "InteractiveBackupWorld" +
+                            Path.DirectorySeparatorChar +
+                            worldName +
+                            Path.DirectorySeparatorChar +
+                            currentWorldBackupFileName;
+
+            Directory.CreateDirectory(destinationWorldPath);
+
+            //var destinationWorldPath = backupContext.ConfigData.BackupTargetDirectory 
+            //                + Path.DirectorySeparatorChar 
+            //                + "InteractiveBackupWorld" 
+            //                + Path.DirectorySeparatorChar 
+            //                + worldName;
+
+            CopyWorldDirectory(sourceWorldPath, destinationWorldPath, worldName);
+
+            // Creating a file describing the backup file,
+            // for example, changes in the current version.
+
+            var commonChangelogFile = backupContext.ConfigData.BackupTargetDirectory
+                + Path.DirectorySeparatorChar 
+                + "InteractiveBackupWorld" 
+                + Path.DirectorySeparatorChar
+                + worldName
+                + Path.DirectorySeparatorChar
+                + worldName
+                + "_changelog.txt";
+
+            var specificChangelogFile = destinationWorldPath
+                                + Path.DirectorySeparatorChar
+                                + worldName
+                                + "_changelog_"
+                                + dateTimeNow.Day.ToString() + "-"
+                                + dateTimeNow.Month.ToString() + "-"
+                                + dateTimeNow.Year.ToString() + "_"
+                                + dateTimeNow.Hour.ToString() + "-"
+                                + dateTimeNow.Minute.ToString() + "-"
+                                + dateTimeNow.Second.ToString()
+                                + ".txt";
+
+            using (StreamWriter streamWriter = File.AppendText(commonChangelogFile))
+            {
+                streamWriter.WriteLine(DateTime.Now);
+                streamWriter.WriteLine();
+                streamWriter.WriteLine(details);
+                streamWriter.WriteLine();
+            }
+
+            using (StreamWriter streamWriter = File.AppendText(specificChangelogFile))
+            {
+                streamWriter.WriteLine(DateTime.Now);
+                streamWriter.WriteLine();
+                streamWriter.WriteLine(details);
+                streamWriter.WriteLine();
+            }
+
         }
 
     }

@@ -68,13 +68,14 @@ internal class ConsoleInterface
         Console.WriteLine("1. Configuration menu");
         Console.WriteLine("2. Manual backup players");
         Console.WriteLine("3. Manual backup worlds");
-        Console.WriteLine("4. Help");
-        Console.WriteLine("5. About");
-        Console.WriteLine("6. Quit");
+        Console.WriteLine("4. Interactive backup world");
+        Console.WriteLine("5. Help");
+        Console.WriteLine("6. About");
+        Console.WriteLine("7. Quit");
 
         bool selectIsCorrect = int.TryParse(Console.ReadLine(), out select);
 
-        if (select >= 1 && select <= 6)
+        if (select >= 1 && select <= 7)
         {
             switch (select)
             {
@@ -88,12 +89,15 @@ internal class ConsoleInterface
                     worldsBackupper.WorldsBackupProcess();
                     return 0;
                 case 4:
-                    HelpMenu();
+                    InteractiveBackupWorld();
                     return 0;
                 case 5:
-                    About();
+                    HelpMenu();
                     return 0;
                 case 6:
+                    About();
+                    return 0;
+                case 7:
                     return -1;
             }
         }
@@ -103,6 +107,59 @@ internal class ConsoleInterface
         }
 
         return 1;
+    }
+
+    public void InteractiveBackupWorld()
+    {
+        Console.Clear();
+
+        var worlds = backupContext.ConfigData.BackupWorldsTargets;
+
+        if (worlds.Count() > 0)
+        {
+            // Show a list of available worlds
+            int count = 1;
+
+            Console.WriteLine("Select a world for backup: ");
+            foreach (string world in worlds)
+            {
+                Console.WriteLine($"{count}. {world}");
+                count++;
+            }
+
+            count = 1;
+
+            // Selecting a world for interactive backup
+            int select = 0;
+            int.TryParse(Console.ReadLine(), out select);
+
+            // Entering the changelog text
+            Console.Clear();
+            Console.WriteLine("Enter text changelog: ");
+
+            var changelogText = Console.ReadLine();
+
+            if (select >= worlds.Count() || select <= worlds.Count())
+                worldsBackupper.InteractiveBackupWorld(worlds[select - 1], changelogText);
+            else
+                InteractiveBackupWorld();
+
+        }
+        else
+        {
+            Console.WriteLine("No worlds for backup.");
+        }
+
+        // Return to main menu
+        Console.WriteLine("Enter something to return to the main menu ...");
+
+        string value = Console.ReadLine();
+
+        if (value != null)
+            MainMenu();
+        else
+            MainMenu();
+
     }
 
     /// <summary>
